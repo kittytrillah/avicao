@@ -1,0 +1,544 @@
+<!DOCTYPE HTML>
+<!--
+	Industrious by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>AWIS</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<link rel="stylesheet" href="{{ url_for('static',filename='main.css') }}" />
+		<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+    	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
+		<!--<script type="text/javascript">-->
+		<!---->
+		<!--</script>-->
+		<style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map { width: 100%; height: 700px; }
+			.marker {
+  		/*background-image: url('/static/icons/marker_map_0');*/
+  		background-size: cover;
+  		width: 50px;
+  		height: 50px;
+  		border-radius: 50%;
+  		cursor: pointer;
+
+}
+			.mapboxgl-popup {
+  max-width: 200px;
+}
+
+.mapboxgl-popup-content {
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}
+		.aligncenter {
+    text-align: center;
+}
+    </style>
+	</head>
+
+
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a class="logo" href="#">AIRPORT WEATHER INFORMATION /// ISA PROJECT HSE 2018</a>
+				<nav>
+					<a href="#menu">Menu</a>
+				</nav>
+			</header>
+
+		<!-- Nav -->
+			<nav id="menu">
+				<ul class="links">
+					<li><a href="#">Home</a></li>
+					<li><a href="#">Choose aircraft</a></li>
+					<li><a href="#">Log out</a></li>
+				</ul>
+			</nav>
+
+
+		<!-- Banner -->
+			<section id="banner">
+				<div class="inner">
+					<h1>AIRPORT WEATHER /// AVICAO</h1>
+					<div class="row">
+							<div class="col-12 col-12-middle">
+								<form method="post" id="search" action="">
+										<div class="row gtr-uniform">
+											<div class="col-9 col-12-middle">
+												<input type="text" name="ss" id="s" value="" placeholder="Airport name or ICAO" />
+
+												<!--<button type="submit"><i class="fa fa-search"></i></button>-->
+											</div>
+											<div class="col-2 col-12-middle">
+												<ul class="actions">
+													<li><button type="submit" class="button primary icon fa-search">Search</button></li>
+												</ul>
+											</div>
+										</div>
+								</form>
+							</div>
+						</div>
+					<p>Get actual airport weather data</p>
+					<div class="scrollButton">
+						<a href="#main">
+						<img class="one" src="{{ url_for('static',filename='down-arrow.png') }}" width="25" height="25">
+						</a>
+					</div>
+			</section>
+
+			<section id="main" class="wrapper">
+				<div class="inner">
+					<div class="content">
+						<div class="col-38 col-18-large">
+						<h2>INTERACTIVE WEATHER MAP</h2>
+							<div class="container">
+		<!--<input class="inputBox" type="number" id="Longitude" placeholder="Enter Longitude" />-->
+		<!--<input class="inputBox" type="number" id="Latitude" placeholder="Enter Latitude" />-->
+		<!--<button class="button" onclick="getLonLat()"> Submit</button>-->
+	</div>
+							<div id='map' style='width: 95%; height:500px;'></div><br/><br/>
+							<script>
+
+		var old_longitude = 0;
+		var old_latitude = 0;
+		var received_longitude = '{{r_long}}';
+		var received_latitude = '{{r_lat}}';
+
+
+		var longitude = 0;
+		var latitude = 0;
+		//mapboxgl.accessToken = 'pk.eyJ1Ijoia2l0dHl0cmlsbGFoIiwiYSI6ImNqajlzY3dydDB6aGMza3AyeDFscXppcDYifQ.aRIq9GQtJxSojfnkEf-xTg'
+		 mapboxgl.accessToken = '{{mapbox_access_token}}';
+
+		var map = new mapboxgl.Map({
+			container: 'map',
+			style: 'mapbox://styles/mapbox/light-v9',
+			center: [35,35],
+			zoom: 1,
+			pitch: 0,
+			});
+
+		function refreshbycall(corx, cory){
+
+			//map.center = [corx,cory];
+			//alert("corx:/" + corx + " cory:/" + cory);
+			//map.zoom = 15;
+			window.location="#main";
+			longitude = corx;
+			latitude = cory;
+
+		}
+
+		function codeAddress() {
+            if(received_longitude != 0 && received_latitude != 0){
+
+			if(received_longitude != old_longitude && received_latitude != old_latitude){
+
+			    old_longitude = parseFloat(received_longitude);
+			    old_latitude = parseFloat(received_latitude);
+			    map = new mapboxgl.Map({
+				container: 'map',
+				style: 'mapbox://styles/mapbox/light-v9',
+				center: [old_longitude,old_latitude],
+				zoom: 10,
+				pitch: 0,
+				});
+			    window.location="#main";
+			}
+
+		}
+        }
+        window.onload = codeAddress;
+
+		map.addControl(new mapboxgl.FullscreenControl());
+
+		function getLonLat(){
+			longitude = document.getElementById("Longitude").value;
+			latitude = document.getElementById("Latitude").value;
+			// longitude = 65
+			// latitude = 65
+			//display_map(longitude, latitude);
+		}
+		function display_map(longitude=33, latitude=34) {
+
+
+			// map = new mapboxgl.Map({
+			// container: 'map',
+			// style: 'mapbox://styles/mapbox/light-v9',
+			// center: [longitude,latitude],
+			// zoom: 1,
+			// pitch: 0,
+			// });
+
+			map.center = [longitude,latitude];
+
+			// // fulscreen button
+			// map.addControl(new mapboxgl.FullscreenControl());
+			// // display a blue marker
+			// var marker = new mapboxgl.Marker()
+			// 	.style.backgroundImage = 'url(https://i.ytimg.com/vi/MO5KYz_1h9o/maxresdefault.jpg)'
+	  		// 	.setLngLat([longitude,latitude])
+	  		// 	.addTo(map);
+
+	  		// Navigation marker at top-left corner
+	  		var nav = new mapboxgl.NavigationControl();
+	  			map.addControl(nav, 'top-left');
+	  		// change false to true, to get your location. Then, enable location in the browser.
+	  		map.addControl(new mapboxgl.GeolocateControl({
+	    			positionOptions: {
+	        			enableHighAccuracy: false
+	    			},
+	    		trackUserLocation: false
+			}));
+	  		// The 'building' layer in the mapbox-streets vector source contains building-height
+			// data from OpenStreetMap.
+			map.on('load', function() {
+
+			    // Insert the layer beneath any symbol layer.
+			    var layers = map.getStyle().layers;
+			    var labelLayerId;
+			    for (var i = 0; i < layers.length; i++) {
+			        if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+			            labelLayerId = layers[i].id;
+			            break;
+			        }
+			    }
+			    map.addLayer({
+			        'id': '3d-buildings',
+			        'source': 'composite',
+			        'source-layer': 'building',
+			        'filter': ['==', 'extrude', 'true'],
+			        'type': 'fill-extrusion',
+			        'minzoom': 15,
+			        'paint': {
+			            'fill-extrusion-color': '#aaa',
+			            // use an 'interpolate' expression to add a smooth transition effect to the
+			            // buildings as the user zooms in
+			            'fill-extrusion-height': [
+			                "interpolate", ["linear"], ["zoom"],
+			                15, 0,
+			                15.05, ["get", "height"]
+			            ],
+			            'fill-extrusion-base': [
+			                "interpolate", ["linear"], ["zoom"],
+			                15, 0,
+			                15.05, ["get", "min_height"]
+			            ],
+			            'fill-extrusion-opacity': .6
+			        }
+			    }, labelLayerId);
+
+			$.ajaxSetup({
+  			cache:false
+			});
+			$.getJSON('http://donkey1.nosoc.io:5055/static/data.geojson', function (geojson) {
+			    var i;
+				for (i = 0; i < geojson.features.length; i++) {
+					var coordinatex = geojson.features[i].geometry.coordinates[0];
+					var coordinatey = geojson.features[i].geometry.coordinates[1];
+					/////////String values for HTML/////////////////
+					var t_crit = geojson.features[i].properties.crit_t;
+					var h_crit = geojson.features[i].properties.crit_h;
+					var w_crit = geojson.features[i].properties.crit_w;
+					var sum_crit = geojson.features[i].properties.crit_sum;
+					var title = geojson.features[i].properties.title;
+					var icao = geojson.features[i].properties.icao;
+					///////////Integer critical values//////////////
+					var t_crit_val = geojson.features[i].properties.crit_t_val;
+					var h_crit_val = geojson.features[i].properties.crit_h_val;
+					var w_crit_val = geojson.features[i].properties.crit_w_val;
+					var sum_crit_val = geojson.features[i].properties.crit_sum_val;
+					////////////////Temporary variables//////////////
+					var infostring = '';
+					if(t_crit_val === 1){
+					    infostring = infostring + ' Critically low temperature'
+					}
+					if(h_crit_val === 1){
+					    infostring = infostring + ' Critically high humidity'
+					}
+					if(w_crit_val === 1){
+					    infostring = infostring + ' Critically wind speed'
+					}
+					if(t_crit_val === 0 && h_crit_val === 0 && w_crit_val === 0){
+					    infostring = 'Weather values are okay'
+					}
+					var el = document.createElement('div');
+					el.className = 'marker';
+					el.style.backgroundImage = 'url(http://donkey1.nosoc.io:5055/static/Icons/marker_map_'+sum_crit_val+'.png)';
+					// el.style.width = '30px';
+					// el.style.height = '30px';
+					el.addEventListener('click', function() {
+					    //leave it for better days
+    				});
+					if(parseFloat(coordinatex) && parseFloat(coordinatey)){
+					    if(parseFloat(coordinatex) !== 0 && parseFloat(coordinatey) !== 0){
+					        function returnhref(item) {
+    						value = icao;
+							}
+							new mapboxgl.Marker(el).setLngLat([coordinatey,coordinatex])
+								.setPopup(new mapboxgl.Popup({ offset: 25 })
+									.setHTML('<h2>' + icao + '</h2><p>' + title + '</p><p>' + 'Condition:' + (4-sum_crit_val)*25 + '%</p><p>' +  infostring + '</p>' + '<ul class="aligncenter">\n' +
+                                        '\t\t\t\t\t\t\t\t\t\t<li><a href="/reports/' + icao + '" target="_blank" class="button small">Get detailed report</a></li>\n' +
+                                        '\t\t\t\t\t\t\t\t\t</ul>')).addTo(map);
+						}
+					}
+
+		}
+
+});
+
+
+
+			});
+
+
+		}
+
+
+
+		display_map();
+
+	</script>
+
+						</div>
+					<!-- Elements -->
+						<!--<div class="row">-->
+							<!--<div class="col-9 col-12-middle">-->
+								<!--<div class="col-12 col-6-middle">-->
+									<!--<ul class="actions">-->
+										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
+									<!--</ul>-->
+								<!--</div>-->
+								<!--<div class="col-36 col-18-middle">-->
+									<!--<ul class="actions">-->
+										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
+									<!--</ul>-->
+								<!--</div>-->
+								<!--<div class="col-36 col-18-middle">-->
+									<!--<ul class="actions">-->
+										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
+									<!--</ul>-->
+								<!--</div>-->
+								<!--<div class="col-36 col-18-middle">-->
+									<!--<ul class="actions">-->
+										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
+									<!--</ul>-->
+								<!--</div>-->
+								<!--<div class="col-36 col-18-middle">-->
+									<!--<ul class="actions">-->
+										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
+									<!--</ul>-->
+								<!--</div>-->
+								<!--<div class="col-36 col-18-middle">-->
+									<!--<ul class="actions">-->
+										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
+									<!--</ul>-->
+								<!--</div>-->
+								<!--<div class="col-36 col-18-middle">-->
+									<!--<ul class="actions">-->
+										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
+									<!--</ul>-->
+								<!--</div>-->
+							<!--</div>-->
+							<!--<div class="col-3 col-12-middle">-->
+							<!--<div class="col-3 col-12-middle">-->
+								<!--<ul class="actions">-->
+										<!--<li><a href="#" class="button small">Weather condition: 66%</a></li>-->
+									<!--</ul>-->
+							<!--</div>-->
+						<!--</div>-->
+					<!--</div>-->
+				</div>
+			</section>
+
+		<!-- Highlights -->
+			<!--<section class="wrapper">-->
+				<!--<div class="inner">-->
+					<!--<header class="special">-->
+						<!--<h2>Sem turpis amet semper</h2>-->
+						<!--<p>In arcu accumsan arcu adipiscing accumsan orci ac. Felis id enim aliquet. Accumsan ac integer lobortis commodo ornare aliquet accumsan erat tempus amet porttitor.</p>-->
+					<!--</header>-->
+					<!--<div class="highlights">-->
+						<!--<section>-->
+							<!--<div class="content">-->
+								<!--<header>-->
+									<!--<a href="#" class="icon fa-vcard-o"><span class="label">Icon</span></a>-->
+									<!--<h3>Feugiat consequat</h3>-->
+								<!--</header>-->
+								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
+							<!--</div>-->
+						<!--</section>-->
+						<!--<section>-->
+							<!--<div class="content">-->
+								<!--<header>-->
+									<!--<a href="#" class="icon fa-files-o"><span class="label">Icon</span></a>-->
+									<!--<h3>Ante sem integer</h3>-->
+								<!--</header>-->
+								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
+							<!--</div>-->
+						<!--</section>-->
+						<!--<section>-->
+							<!--<div class="content">-->
+								<!--<header>-->
+									<!--<a href="#" class="icon fa-floppy-o"><span class="label">Icon</span></a>-->
+									<!--<h3>Ipsum consequat</h3>-->
+								<!--</header>-->
+								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
+							<!--</div>-->
+						<!--</section>-->
+						<!--<section>-->
+							<!--<div class="content">-->
+								<!--<header>-->
+									<!--<a href="#" class="icon fa-line-chart"><span class="label">Icon</span></a>-->
+									<!--<h3>Interdum gravida</h3>-->
+								<!--</header>-->
+								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
+							<!--</div>-->
+						<!--</section>-->
+						<!--<section>-->
+							<!--<div class="content">-->
+								<!--<header>-->
+									<!--<a href="#" class="icon fa-paper-plane-o"><span class="label">Icon</span></a>-->
+									<!--<h3>Faucibus consequat</h3>-->
+								<!--</header>-->
+								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
+							<!--</div>-->
+						<!--</section>-->
+						<!--<section>-->
+							<!--<div class="content">-->
+								<!--<header>-->
+									<!--<a href="#" class="icon fa-qrcode"><span class="label">Icon</span></a>-->
+									<!--<h3>Accumsan viverra</h3>-->
+								<!--</header>-->
+								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
+							<!--</div>-->
+						<!--</section>-->
+					<!--</div>-->
+				<!--</div>-->
+			<!--</section>-->
+
+		<!-- CTA -->
+			<!--<section id="cta" class="wrapper">-->
+				<!--<div class="inner">-->
+					<!--<h2>Curabitur ullamcorper ultricies</h2>-->
+					<!--<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing. Lorem ipsum dolor vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing sed feugiat eu faucibus. Integer ac sed amet praesent. Nunc lacinia ante nunc ac gravida.</p>-->
+				<!--</div>-->
+			<!--</section>-->
+
+		<!-- Testimonials -->
+			<!--<section class="wrapper">-->
+				<!--<div class="inner">-->
+					<!--<header class="special">-->
+						<!--<h2>Faucibus consequat lorem</h2>-->
+						<!--<p>In arcu accumsan arcu adipiscing accumsan orci ac. Felis id enim aliquet. Accumsan ac integer lobortis commodo ornare aliquet accumsan erat tempus amet porttitor.</p>-->
+					<!--</header>-->
+					<!--<div class="testimonials">-->
+						<!--<section>-->
+							<!--<div class="content">-->
+								<!--<blockquote>-->
+									<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
+								<!--</blockquote>-->
+								<!--<div class="author">-->
+									<!--<div class="image">-->
+										<!--<img src="images/pic01.jpg" alt="" />-->
+									<!--</div>-->
+									<!--<p class="credit">- <strong>Jane Doe</strong> <span>CEO - ABC Inc.</span></p>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</section>-->
+						<!--<section>-->
+							<!--<div class="content">-->
+								<!--<blockquote>-->
+									<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
+								<!--</blockquote>-->
+								<!--<div class="author">-->
+									<!--<div class="image">-->
+										<!--<img src="images/pic03.jpg" alt="" />-->
+									<!--</div>-->
+									<!--<p class="credit">- <strong>John Doe</strong> <span>CEO - ABC Inc.</span></p>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</section>-->
+						<!--<section>-->
+							<!--<div class="content">-->
+								<!--<blockquote>-->
+									<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
+								<!--</blockquote>-->
+								<!--<div class="author">-->
+									<!--<div class="image">-->
+										<!--<img src="images/pic02.jpg" alt="" />-->
+									<!--</div>-->
+									<!--<p class="credit">- <strong>Janet Smith</strong> <span>CEO - ABC Inc.</span></p>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</section>-->
+					<!--</div>-->
+				<!--</div>-->
+			<!--</section>-->
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<div class="content">
+						<section>
+							<h3>Airport weather information system</h3>
+							<p>Currently containts 90 icao codes. Try to input something in search box. Mostly targeted on easy work with a map</p>
+						</section>
+						<section>
+							<h4>Links</h4>
+							<ul class="alt">
+								<li><a href="#">Dummy link</a></li>
+								<li><a href="#">Dummy link</a></li>
+								<li><a href="#">Dummy link</a></li>
+								<li><a href="#">Tummy pink</a></li>
+							</ul>
+						</section>
+						<section>
+							<h4>Socials</h4>
+							<ul class="plain">
+								<li><a href="https://twitter.com/icao" target="_blank"><i class="icon fa-twitter">&nbsp;</i>Twitter</a></li>
+								<li><a href="https://www.facebook.com/InternationalCivilAviationOrganization/" target="_blank"><i class="icon fa-facebook">&nbsp;</i>Facebook</a></li>
+								<li><a href="http://instagram.com/icao" target="_blank"><i class="icon fa-instagram">&nbsp;</i>Instagram</a></li>
+								<li><a href="https://github.com/kittytrillah" target="_blank"><i class="icon fa-github">&nbsp;</i>Github</a></li>
+							</ul>
+						</section>
+					</div>
+					<div class="copyright">
+						<a href="https://gurycube.com">&copy; 2018 GuryCube</a>
+					</div>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script  type="text/javascript" language="javascript" src="{{ url_for('static',filename='jquery.min.js') }}"></script>
+			<script type="text/javascript">
+				$("a[href^='#']").click(function(e) {
+	e.preventDefault();
+
+	var position = $($(this).attr("href")).offset().top;
+
+	$("body, html").animate({
+		scrollTop: position
+	} /* speed */ );
+});
+			</script>
+			<script src="{{ url_for('static',filename='browser.min.js') }}"></script>
+			<script src="{{ url_for('static',filename='breakpoints.min.js') }}"></script>
+			<script src="{{ url_for('static',filename='util.js') }}"></script>
+			<script src="{{ url_for('static',filename='main.js') }}"></script>
+			<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"> </script>-->
+
+	</body>
+</html>
