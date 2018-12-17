@@ -320,6 +320,7 @@ def clearjson():
     data['features'] = []
     with open('static/data.geojson', 'w') as outfile:
         json.dump(data, outfile)
+    getdata()
     return 'Done'
 
 
@@ -567,7 +568,6 @@ def parse_dms(dms):
 
 def refreshdata():
     clearjson()
-    getdata()
     return 'Done'
 
 
@@ -579,7 +579,7 @@ def truncate(f, n):
     return '.'.join([i, (d+'0'*n)[:n]])
 
 
-scheduler.add_job(func=refreshdata, trigger="interval", minutes=240)
+scheduler.add_job(func=refreshdata, trigger="interval", minutes=8)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 

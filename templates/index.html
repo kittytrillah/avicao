@@ -243,7 +243,7 @@
 			$.ajaxSetup({
   			cache:false
 			});
-			$.getJSON('http://donkey1.nosoc.io:5055/static/data.geojson', function (geojson) {
+			$.getJSON('http://83.220.168.38:5055/static/data.geojson', function (geojson) { //http://127.0.0.1:5000/static/data.geojson
 			    var i;
 				for (i = 0; i < geojson.features.length; i++) {
 					var coordinatex = geojson.features[i].geometry.coordinates[0];
@@ -276,7 +276,7 @@
 					}
 					var el = document.createElement('div');
 					el.className = 'marker';
-					el.style.backgroundImage = 'url(http://donkey1.nosoc.io:5055/static/Icons/marker_map_'+sum_crit_val+'.png)';
+					el.style.backgroundImage = 'url(http://83.220.168.38:5055/static/Icons/marker_map_'+sum_crit_val+'.png)'; //127.
 					// el.style.width = '30px';
 					// el.style.height = '30px';
 					el.addEventListener('click', function() {
