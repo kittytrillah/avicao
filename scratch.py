@@ -579,7 +579,7 @@ def truncate(f, n):
     return '.'.join([i, (d+'0'*n)[:n]])
 
 
-scheduler.add_job(func=refreshdata, trigger="interval", minutes=8)
+scheduler.add_job(func=refreshdata, trigger="interval", minutes=1440)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
