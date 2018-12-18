@@ -12,6 +12,7 @@ import sqlite3
 import seaborn as sns
 import base64
 import random
+import os
 from flask import Response
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -51,6 +52,10 @@ def hello():
     #createhtml_icaolist()
     return render_template('index.html',
         mapbox_access_token=mapbox_access_token, r_long=0, r_lat=0)
+
+@app.route('/favicon.ico')
+def fav():
+    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico')
 
 
 def getdata():
@@ -318,6 +323,10 @@ def setuniquedb(place, rdate, pressure, wind, humidity, temperature, name, crit_
 def clearjson():
     data = {}
     data['features'] = []
+    if os.path.exists("static/data.geojson"):
+        os.remove("static/data.geojson")
+    else:
+        print("The file does not exist")
     with open('static/data.geojson', 'w') as outfile:
         json.dump(data, outfile)
     getdata()
