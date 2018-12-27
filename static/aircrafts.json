@@ -1,0 +1,103 @@
+{
+  "features": [
+    {
+      "type": "Aircraft",
+      "properties": {
+        "icon": 1,
+        "title": "Boeing 737",
+        "max_wind": 25,
+        "max_temp": 120,
+        "min_temp": -45,
+        "max_humid": 90
+      }
+    },
+    {
+      "type": "Aircraft",
+      "properties": {
+        "icon": 1,
+        "title": "Boeing 747",
+        "max_wind": 30,
+        "max_temp": 126,
+        "min_temp": -70,
+        "max_humid": 90
+      }
+    },
+    {
+      "type": "Aircraft",
+      "properties": {
+        "icon": 1,
+        "title": "Boeing 757",
+        "max_wind": 25,
+        "max_temp": 130,
+        "min_temp": -66,
+        "max_humid": 90
+      }
+    },
+    {
+      "type": "Aircraft",
+      "properties": {
+        "icon": 1,
+        "title": "Airbus A320",
+        "max_wind": 25,
+        "max_temp": 127,
+        "min_temp": -25,
+        "max_humid": 90
+      }
+    },
+    {
+      "type": "Aircraft",
+      "properties": {
+        "icon": 1,
+        "title": "Airbus A340",
+        "max_wind": 35,
+        "max_temp": 129,
+        "min_temp": -52,
+        "max_humid": 90
+      }
+    },
+    {
+      "type": "Aircraft",
+      "properties": {
+        "icon": 1,
+        "title": "Airbus A380",
+        "max_wind": 35,
+        "max_temp": 120,
+        "min_temp": -55,
+        "max_humid": 90
+      }
+    },
+    {
+      "type": "Aircraft",
+      "properties": {
+        "icon": 1,
+        "title": "Bombardier CRJ 200",
+        "max_wind": 22,
+        "max_temp": 115,
+        "min_temp": -25,
+        "max_humid": 90
+      }
+    },
+    {
+      "type": "Aircraft",
+      "properties": {
+        "icon": 1,
+        "title": "Bombardier CRJ 700",
+        "max_wind": 24,
+        "max_temp": 117,
+        "min_temp": -25,
+        "max_humid": 90
+      }
+    },
+    {
+      "type": "Aircraft",
+      "properties": {
+        "icon": 1,
+        "title": "Cessna 172",
+        "max_wind": 15,
+        "max_temp": 115,
+        "min_temp": -25,
+        "max_humid": 90
+      }
+    }
+  ]
+}

@@ -7,7 +7,7 @@
 <html>
 	<head>
 		<link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static',filename='favicon.ico') }}">
-		<title>AWIS</title>
+		<title>AVICAO</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<meta name="description" content="" />
@@ -15,9 +15,6 @@
 		<link rel="stylesheet" href="{{ url_for('static',filename='main.css') }}" />
 		<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
     	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
-		<!--<script type="text/javascript">-->
-		<!---->
-		<!--</script>-->
 		<style>
       body {
         margin: 0;
@@ -64,7 +61,7 @@
 				<ul class="links">
 					<li><a href="#">Home</a></li>
 					<li><a href="#">Choose aircraft</a></li>
-					<li><a href="#">Log out</a></li>
+					<li><a href="#">Log in</a></li>
 				</ul>
 			</nav>
 
@@ -79,8 +76,6 @@
 										<div class="row gtr-uniform">
 											<div class="col-9 col-12-middle">
 												<input type="text" name="ss" id="s" value="" placeholder="Airport name or ICAO" />
-
-												<!--<button type="submit"><i class="fa fa-search"></i></button>-->
 											</div>
 											<div class="col-3 col-12-middle">
 												<ul class="actions">
@@ -105,9 +100,6 @@
 						<div class="col-38 col-18-large">
 						<h2>INTERACTIVE WEATHER MAP</h2>
 							<div class="container">
-		<!--<input class="inputBox" type="number" id="Longitude" placeholder="Enter Longitude" />-->
-		<!--<input class="inputBox" type="number" id="Latitude" placeholder="Enter Latitude" />-->
-		<!--<button class="button" onclick="getLonLat()"> Submit</button>-->
 	</div>
 							<div id='map' style='width: 95%; height:500px;'></div><br/><br/>
 							<script>
@@ -120,7 +112,6 @@
 
 		var longitude = 0;
 		var latitude = 0;
-		//mapboxgl.accessToken = 'pk.eyJ1Ijoia2l0dHl0cmlsbGFoIiwiYSI6ImNqajlzY3dydDB6aGMza3AyeDFscXppcDYifQ.aRIq9GQtJxSojfnkEf-xTg'
 		 mapboxgl.accessToken = '{{mapbox_access_token}}';
 
 		var map = new mapboxgl.Map({
@@ -133,9 +124,6 @@
 
 		function refreshbycall(corx, cory){
 
-			//map.center = [corx,cory];
-			//alert("corx:/" + corx + " cory:/" + cory);
-			//map.zoom = 15;
 			window.location="#main";
 			longitude = corx;
 			latitude = cory;
@@ -168,31 +156,9 @@
 		function getLonLat(){
 			longitude = document.getElementById("Longitude").value;
 			latitude = document.getElementById("Latitude").value;
-			// longitude = 65
-			// latitude = 65
-			//display_map(longitude, latitude);
 		}
 		function display_map(longitude=33, latitude=34) {
-
-
-			// map = new mapboxgl.Map({
-			// container: 'map',
-			// style: 'mapbox://styles/mapbox/light-v9',
-			// center: [longitude,latitude],
-			// zoom: 1,
-			// pitch: 0,
-			// });
-
 			map.center = [longitude,latitude];
-
-			// // fulscreen button
-			// map.addControl(new mapboxgl.FullscreenControl());
-			// // display a blue marker
-			// var marker = new mapboxgl.Marker()
-			// 	.style.backgroundImage = 'url(https://i.ytimg.com/vi/MO5KYz_1h9o/maxresdefault.jpg)'
-	  		// 	.setLngLat([longitude,latitude])
-	  		// 	.addTo(map);
-
 	  		// Navigation marker at top-left corner
 	  		var nav = new mapboxgl.NavigationControl();
 	  			map.addControl(nav, 'top-left');
@@ -244,7 +210,7 @@
 			$.ajaxSetup({
   			cache:false
 			});
-			$.getJSON('http://donkey1.nosoc.io:5055/static/data.geojson', function (geojson) { //http://127.0.0.1:5000/static/data.geojson
+			$.getJSON('http://194.87.147.155/static/data.geojson', function (geojson) { //http://127.0.0.1:5000/static/data.geojson
 			    var i;
 				for (i = 0; i < geojson.features.length; i++) {
 					var coordinatex = geojson.features[i].geometry.coordinates[0];
@@ -277,11 +243,8 @@
 					}
 					var el = document.createElement('div');
 					el.className = 'marker';
-					el.style.backgroundImage = 'url(http://donkey1.nosoc.io:5055/static/Icons/marker_map_'+sum_crit_val+'.png)'; //127.
-					// el.style.width = '30px';
-					// el.style.height = '30px';
+					el.style.backgroundImage = 'url(http://194.87.147.155/static/Icons/marker_map_'+sum_crit_val+'.png)'; //127.
 					el.addEventListener('click', function() {
-					    //leave it for better days
     				});
 					if(parseFloat(coordinatex) && parseFloat(coordinatey)){
 					    if(parseFloat(coordinatex) !== 0 && parseFloat(coordinatey) !== 0){
@@ -310,200 +273,25 @@
 
 
 		display_map();
-
 	</script>
-
 						</div>
-					<!-- Elements -->
-						<!--<div class="row">-->
-							<!--<div class="col-9 col-12-middle">-->
-								<!--<div class="col-12 col-6-middle">-->
-									<!--<ul class="actions">-->
-										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
-									<!--</ul>-->
-								<!--</div>-->
-								<!--<div class="col-36 col-18-middle">-->
-									<!--<ul class="actions">-->
-										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
-									<!--</ul>-->
-								<!--</div>-->
-								<!--<div class="col-36 col-18-middle">-->
-									<!--<ul class="actions">-->
-										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
-									<!--</ul>-->
-								<!--</div>-->
-								<!--<div class="col-36 col-18-middle">-->
-									<!--<ul class="actions">-->
-										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
-									<!--</ul>-->
-								<!--</div>-->
-								<!--<div class="col-36 col-18-middle">-->
-									<!--<ul class="actions">-->
-										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
-									<!--</ul>-->
-								<!--</div>-->
-								<!--<div class="col-36 col-18-middle">-->
-									<!--<ul class="actions">-->
-										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
-									<!--</ul>-->
-								<!--</div>-->
-								<!--<div class="col-36 col-18-middle">-->
-									<!--<ul class="actions">-->
-										<!--<li><a href="#" class="button small">Airport CAWABUNGA TESTESTESTESTESTTESTESTEST</a></li>-->
-									<!--</ul>-->
-								<!--</div>-->
-							<!--</div>-->
-							<!--<div class="col-3 col-12-middle">-->
-							<!--<div class="col-3 col-12-middle">-->
-								<!--<ul class="actions">-->
-										<!--<li><a href="#" class="button small">Weather condition: 66%</a></li>-->
-									<!--</ul>-->
-							<!--</div>-->
-						<!--</div>-->
-					<!--</div>-->
 				</div>
 			</section>
-
-		<!-- Highlights -->
-			<!--<section class="wrapper">-->
-				<!--<div class="inner">-->
-					<!--<header class="special">-->
-						<!--<h2>Sem turpis amet semper</h2>-->
-						<!--<p>In arcu accumsan arcu adipiscing accumsan orci ac. Felis id enim aliquet. Accumsan ac integer lobortis commodo ornare aliquet accumsan erat tempus amet porttitor.</p>-->
-					<!--</header>-->
-					<!--<div class="highlights">-->
-						<!--<section>-->
-							<!--<div class="content">-->
-								<!--<header>-->
-									<!--<a href="#" class="icon fa-vcard-o"><span class="label">Icon</span></a>-->
-									<!--<h3>Feugiat consequat</h3>-->
-								<!--</header>-->
-								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
-							<!--</div>-->
-						<!--</section>-->
-						<!--<section>-->
-							<!--<div class="content">-->
-								<!--<header>-->
-									<!--<a href="#" class="icon fa-files-o"><span class="label">Icon</span></a>-->
-									<!--<h3>Ante sem integer</h3>-->
-								<!--</header>-->
-								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
-							<!--</div>-->
-						<!--</section>-->
-						<!--<section>-->
-							<!--<div class="content">-->
-								<!--<header>-->
-									<!--<a href="#" class="icon fa-floppy-o"><span class="label">Icon</span></a>-->
-									<!--<h3>Ipsum consequat</h3>-->
-								<!--</header>-->
-								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
-							<!--</div>-->
-						<!--</section>-->
-						<!--<section>-->
-							<!--<div class="content">-->
-								<!--<header>-->
-									<!--<a href="#" class="icon fa-line-chart"><span class="label">Icon</span></a>-->
-									<!--<h3>Interdum gravida</h3>-->
-								<!--</header>-->
-								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
-							<!--</div>-->
-						<!--</section>-->
-						<!--<section>-->
-							<!--<div class="content">-->
-								<!--<header>-->
-									<!--<a href="#" class="icon fa-paper-plane-o"><span class="label">Icon</span></a>-->
-									<!--<h3>Faucibus consequat</h3>-->
-								<!--</header>-->
-								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
-							<!--</div>-->
-						<!--</section>-->
-						<!--<section>-->
-							<!--<div class="content">-->
-								<!--<header>-->
-									<!--<a href="#" class="icon fa-qrcode"><span class="label">Icon</span></a>-->
-									<!--<h3>Accumsan viverra</h3>-->
-								<!--</header>-->
-								<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
-							<!--</div>-->
-						<!--</section>-->
-					<!--</div>-->
-				<!--</div>-->
-			<!--</section>-->
-
-		<!-- CTA -->
-			<!--<section id="cta" class="wrapper">-->
-				<!--<div class="inner">-->
-					<!--<h2>Curabitur ullamcorper ultricies</h2>-->
-					<!--<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing. Lorem ipsum dolor vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing sed feugiat eu faucibus. Integer ac sed amet praesent. Nunc lacinia ante nunc ac gravida.</p>-->
-				<!--</div>-->
-			<!--</section>-->
-
-		<!-- Testimonials -->
-			<!--<section class="wrapper">-->
-				<!--<div class="inner">-->
-					<!--<header class="special">-->
-						<!--<h2>Faucibus consequat lorem</h2>-->
-						<!--<p>In arcu accumsan arcu adipiscing accumsan orci ac. Felis id enim aliquet. Accumsan ac integer lobortis commodo ornare aliquet accumsan erat tempus amet porttitor.</p>-->
-					<!--</header>-->
-					<!--<div class="testimonials">-->
-						<!--<section>-->
-							<!--<div class="content">-->
-								<!--<blockquote>-->
-									<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
-								<!--</blockquote>-->
-								<!--<div class="author">-->
-									<!--<div class="image">-->
-										<!--<img src="images/pic01.jpg" alt="" />-->
-									<!--</div>-->
-									<!--<p class="credit">- <strong>Jane Doe</strong> <span>CEO - ABC Inc.</span></p>-->
-								<!--</div>-->
-							<!--</div>-->
-						<!--</section>-->
-						<!--<section>-->
-							<!--<div class="content">-->
-								<!--<blockquote>-->
-									<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
-								<!--</blockquote>-->
-								<!--<div class="author">-->
-									<!--<div class="image">-->
-										<!--<img src="images/pic03.jpg" alt="" />-->
-									<!--</div>-->
-									<!--<p class="credit">- <strong>John Doe</strong> <span>CEO - ABC Inc.</span></p>-->
-								<!--</div>-->
-							<!--</div>-->
-						<!--</section>-->
-						<!--<section>-->
-							<!--<div class="content">-->
-								<!--<blockquote>-->
-									<!--<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>-->
-								<!--</blockquote>-->
-								<!--<div class="author">-->
-									<!--<div class="image">-->
-										<!--<img src="images/pic02.jpg" alt="" />-->
-									<!--</div>-->
-									<!--<p class="credit">- <strong>Janet Smith</strong> <span>CEO - ABC Inc.</span></p>-->
-								<!--</div>-->
-							<!--</div>-->
-						<!--</section>-->
-					<!--</div>-->
-				<!--</div>-->
-			<!--</section>-->
-
 		<!-- Footer -->
 			<footer id="footer">
 				<div class="inner">
 					<div class="content">
 						<section>
 							<h3>Airport weather information system</h3>
-							<p>Currently containts 90 icao codes. Try to input something in search box. Mostly targeted on easy work with a map</p>
+							<p>Constantly gets info about existing and active airports. Currently in development</p>
 						</section>
 						<section>
 							<h4>Links</h4>
 							<ul class="alt">
-								<li><a href="#">Dummy link</a></li>
-								<li><a href="#">Dummy link</a></li>
-								<li><a href="#">Dummy link</a></li>
-								<li><a href="#">Tummy pink</a></li>
+								<li><a href="#">Currently unavailable</a></li>
+								<li><a href="#">Currently unavailable</a></li>
+								<li><a href="#">Currently unavailable</a></li>
+								<li><a href="#">Currently unavailable</a></li>
 							</ul>
 						</section>
 						<section>
@@ -517,7 +305,7 @@
 						</section>
 					</div>
 					<div class="copyright">
-						<a href="https://gurycube.com">&copy; 2018 GuryCube</a>
+						<a href="https://gurycube.com">&copy; 2018-2019 GuryCube</a>
 					</div>
 				</div>
 			</footer>
@@ -539,7 +327,5 @@
 			<script src="{{ url_for('static',filename='breakpoints.min.js') }}"></script>
 			<script src="{{ url_for('static',filename='util.js') }}"></script>
 			<script src="{{ url_for('static',filename='main.js') }}"></script>
-			<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"> </script>-->
-
 	</body>
 </html>

@@ -385,8 +385,6 @@ def createjson(place, rdate, pressure, wind, humidity, temperature, name, crit_s
     return 'Done'
 
 
-# @app.route('/reports/')
-# @app.route('/reports/<name>')
 @app.route('/plot.png')
 def plotdraw(): #name=None
 
@@ -420,10 +418,6 @@ def create_figure():
     return fig
 
 
-#/?ss=sdf#
-#@app.route('/?ss=')
-#@app.route('/?ss=<name>')
-#@app.route('/ss=', methods=['GET', 'POST'])
 @app.route('/', methods=['POST'])
 def searchfor():
     print("////////////Search started/////////////")
@@ -588,10 +582,18 @@ def truncate(f, n):
     return '.'.join([i, (d+'0'*n)[:n]])
 
 
+def getactiveairports():
+    return 'Done'
+
+
+def getuip():
+    return request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+
+
 scheduler.add_job(func=refreshdata, trigger="interval", minutes=1440)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__ == '__main__':
-    app.run()
+    app.run(host='http://194.87.147.155/')
