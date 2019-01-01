@@ -1,4 +1,9 @@
 from __future__ import division, unicode_literals
+
+class DataParser:
+    def __init__(self):
+        self.globalData = "hello"
+
 import codecs
 from flask import Flask
 from flask import render_template
@@ -27,6 +32,7 @@ except ImportError:
     import io as StringIO
 
 app = Flask(__name__)
+my_server = DataParser()
 scheduler = BackgroundScheduler()
 conn = sqlite3.connect("icao_db.db")
 
@@ -46,10 +52,6 @@ mapbox_access_token = 'pk.eyJ1Ijoia2l0dHl0cmlsbGFoIiwiYSI6ImNqajlzY3dydDB6aGMza3
 
 @app.route("/")
 def hello():
-    # clearjson()
-    # getdata()
-    #plotdraw()
-    #createhtml_icaolist()
     return render_template('index.html',
         mapbox_access_token=mapbox_access_token, r_long=0, r_lat=0)
 
@@ -60,21 +62,23 @@ def fav():
 
 def getdata():
     for icao_i in icao:
-        result_date = 'N/A'
-        result_dp = 0
-        result_pressure = 0
-        result_relhum = 0
-        result_temp = 0
-        result_tempo = 0
-        result_visibility = 0
-        result_windspd = 0
-        result_place = ''
-        result_overallconditions = 0
-        result_critwind = 0
-        result_crithumid = 0
-        result_crittemp = 0
-        result_coordinatex = 0
-        result_coordinatey = 0
+        result_date = 'N/A'; result_dp = 0; result_pressure = 0; result_relhum = 0; result_temp = 0; result_tempo = 0;
+        result_visibility = 0; result_windspd = 0; result_place = ''; result_overallconditions = 0; result_critwind = 0;
+        result_crithumid = 0; result_crittemp = 0; result_coordinatex = 0; result_coordinatey = 0;
+        # result_dp = 0
+        # result_pressure = 0
+        # result_relhum = 0
+        # result_temp = 0
+        # result_tempo = 0
+        # result_visibility = 0
+        # result_windspd = 0
+        # result_place = ''
+        # result_overallconditions = 0
+        # result_critwind = 0
+        # result_crithumid = 0
+        # result_crittemp = 0
+        # result_coordinatex = 0
+        # result_coordinatey = 0
         try:
             f = requests.get(link.format(icao_i))
             print(f)
@@ -132,7 +136,7 @@ def getdata():
                     except Exception as err:
                         print(err)
                         pass
-                else: #get coords from the name 'Tete, Mozambique (FQTE) 16-11S 033-35E 150M -> 78°55'44.29458"N ///55-07-52N
+                else:
                     try:
                         result_place_temp = result_place + ':'
                         result_coordinates = result_place_temp[
@@ -140,7 +144,7 @@ def getdata():
                                                  ' (' + icao_i + ') ')):result_place_temp.index(
                                                  ':')]
 
-                        result_split = re.split('[SN]+\s+', result_coordinates) #Sometimes it skips whitespace /// NEEDS A FIX
+                        result_split = re.split('[SN]+\s+', result_coordinates)
                         print(result_split)
                         sn_word = ""
                         we_word = ""
@@ -590,10 +594,14 @@ def getuip():
     return request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
 
 
+def aircrafrparams():
+    return 'Done'
+
+
 scheduler.add_job(func=refreshdata, trigger="interval", minutes=1440)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__ == '__main__':
-    app.run(host='http://194.87.147.155/')
+    app.run(host='194.87.147.155')

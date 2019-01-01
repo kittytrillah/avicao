@@ -210,7 +210,7 @@
 			$.ajaxSetup({
   			cache:false
 			});
-			$.getJSON('http://194.87.147.155/static/data.geojson', function (geojson) { //http://127.0.0.1:5000/static/data.geojson
+			$.getJSON('http://127.0.0.1:5000/static/data.geojson', function (geojson) { //http://127.0.0.1:5000/static/data.geojson http://194.87.147.155
 			    var i;
 				for (i = 0; i < geojson.features.length; i++) {
 					var coordinatex = geojson.features[i].geometry.coordinates[0];
@@ -243,7 +243,7 @@
 					}
 					var el = document.createElement('div');
 					el.className = 'marker';
-					el.style.backgroundImage = 'url(http://194.87.147.155/static/Icons/marker_map_'+sum_crit_val+'.png)'; //127.
+					el.style.backgroundImage = 'url(http://127.0.0.1:5000/static/Icons/marker_map_'+sum_crit_val+'.png)'; //127.
 					el.addEventListener('click', function() {
     				});
 					if(parseFloat(coordinatex) && parseFloat(coordinatey)){
