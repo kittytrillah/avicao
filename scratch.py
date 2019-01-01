@@ -1,84 +1,11 @@
 from __future__ import division, unicode_literals
 
+
 class DataParser:
-    def __init__(self):
-        self.globalData = "hello"
-
-import codecs
-from flask import Flask
-from flask import render_template
-from flask import request
-from flask import redirect
-import matplotlib.pyplot as plt
-import requests
-import re
-import itertools
-import sqlite3
-import seaborn as sns
-import base64
-import random
-import os
-from flask import Response
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-from werkzeug.contrib.fixers import ProxyFix
-from apscheduler.schedulers.background import BackgroundScheduler
-from bs4 import BeautifulSoup as Soup
-import atexit
-import json
-try:
-    from StringIO import StringIO
-except ImportError:
-    import io as StringIO
-
-app = Flask(__name__)
-my_server = DataParser()
-scheduler = BackgroundScheduler()
-conn = sqlite3.connect("icao_db.db")
-
-# Input values
-wind_crit = 17.3 #20 MPH
-humid_crit = 90
-temp_crit = 19.4 #-7C
-icao = ['KMSV','MYNN','KM40','KJHN','CWSL','KEGV','SBAA','KNYG','OOSH','SBIZ','SBKP','RJOT','SEMT','SBGL','NTAA','MGMM',
-             'KGDV','KFNT','ESDF','KGVL','KJSL','EPMO','K1IN','KLNC','MDAB','CYQZ','K1JN','PPNU','PAMM','KVAF','LTAP','KDYS','K1JM','CXMM','KMYR','KFLY','MRLM','KDMN','CWXL','KFIT','KW75','LEMH','PAMC','KCKZ','KHOT',
-             'DAAV','LRBO','YESP','KBUY','EDQM','KDFI','CYYB','KMCJ','KSZL','SLJE','K1MW','CWBU','KETN','KMYV','KLWB', 'KFIG', 'KIOB', 'MMQT', 'CYOY', 'KENL', 'SKSP', 'CWMM', 'KS52', 'KGYL', 'KSGJ', 'KEVU', 'VTCC',
-          'GMFM', 'GMTN', 'KCTY', 'CYFO', 'CWID', 'PAVC', 'KSTC', 'SBGR', 'CXEC', 'YMTG', 'MTPP', 'KJVL', 'VEJH',
-          'ROYN', 'SKIP', 'KTTA', 'NZFX']
-link = 'http://tgftp.nws.noaa.gov/data/observations/metar/decoded/{}.TXT'
-add_link = 'https://weather.gladstonefamily.net/site/{}' #use this link to get additional data & history
-
-mapbox_access_token = 'pk.eyJ1Ijoia2l0dHl0cmlsbGFoIiwiYSI6ImNqajlzY3dydDB6aGMza3AyeDFscXppcDYifQ.aRIq9GQtJxSojfnkEf-xTg'
-
-@app.route("/")
-def hello():
-    return render_template('index.html',
-        mapbox_access_token=mapbox_access_token, r_long=0, r_lat=0)
-
-@app.route('/favicon.ico')
-def fav():
-    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico')
-
-
-def getdata():
-    for icao_i in icao:
+    def getairportdata(self, icao_i):
         result_date = 'N/A'; result_dp = 0; result_pressure = 0; result_relhum = 0; result_temp = 0; result_tempo = 0;
         result_visibility = 0; result_windspd = 0; result_place = ''; result_overallconditions = 0; result_critwind = 0;
         result_crithumid = 0; result_crittemp = 0; result_coordinatex = 0; result_coordinatey = 0;
-        # result_dp = 0
-        # result_pressure = 0
-        # result_relhum = 0
-        # result_temp = 0
-        # result_tempo = 0
-        # result_visibility = 0
-        # result_windspd = 0
-        # result_place = ''
-        # result_overallconditions = 0
-        # result_critwind = 0
-        # result_crithumid = 0
-        # result_crittemp = 0
-        # result_coordinatex = 0
-        # result_coordinatey = 0
         try:
             f = requests.get(link.format(icao_i))
             print(f)
@@ -284,7 +211,79 @@ def getdata():
         print(result_coordinatey)
         print("///-------------------------------///")
         recordtext(icao_i, result_info)
-        setdb(icao_i, result_date, result_pressure, result_windspd, result_relhum, result_tempo, result_place, result_overallconditions, result_critwind, result_crithumid, result_crittemp, result_coordinatex, result_coordinatey)
+        return(icao_i, result_date, result_pressure, result_windspd, result_relhum, result_tempo, result_place, result_overallconditions, result_critwind, result_crithumid, result_crittemp, result_coordinatex, result_coordinatey)
+        # setdb all this stuff
+
+
+class GetActiveAirports:
+    def __init__(self):
+        pass
+
+
+import codecs
+from flask import Flask
+from flask import render_template
+from flask import request
+from flask import redirect
+import matplotlib.pyplot as plt
+import requests
+import re
+import itertools
+import sqlite3
+import seaborn as sns
+import base64
+import random
+import os
+from flask import Response
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+from werkzeug.contrib.fixers import ProxyFix
+from apscheduler.schedulers.background import BackgroundScheduler
+from bs4 import BeautifulSoup as Soup
+import atexit
+import json
+try:
+    from StringIO import StringIO
+except ImportError:
+    import io as StringIO
+
+app = Flask(__name__)
+dataparser = DataParser()
+scheduler = BackgroundScheduler()
+conn = sqlite3.connect("icao_db.db")
+
+# Input values
+wind_crit = 17.3 #20 MPH
+humid_crit = 90
+temp_crit = 19.4 #-7C
+icao = ['KMSV','MYNN','KM40','KJHN','CWSL','KEGV','SBAA','KNYG','OOSH','SBIZ','SBKP','RJOT','SEMT','SBGL','NTAA','MGMM',
+             'KGDV','KFNT','ESDF','KGVL','KJSL','EPMO','K1IN','KLNC','MDAB','CYQZ','K1JN','PPNU','PAMM','KVAF','LTAP','KDYS','K1JM','CXMM','KMYR','KFLY','MRLM','KDMN','CWXL','KFIT','KW75','LEMH','PAMC','KCKZ','KHOT',
+             'DAAV','LRBO','YESP','KBUY','EDQM','KDFI','CYYB','KMCJ','KSZL','SLJE','K1MW','CWBU','KETN','KMYV','KLWB', 'KFIG', 'KIOB', 'MMQT', 'CYOY', 'KENL', 'SKSP', 'CWMM', 'KS52', 'KGYL', 'KSGJ', 'KEVU', 'VTCC',
+          'GMFM', 'GMTN', 'KCTY', 'CYFO', 'CWID', 'PAVC', 'KSTC', 'SBGR', 'CXEC', 'YMTG', 'MTPP', 'KJVL', 'VEJH',
+          'ROYN', 'SKIP', 'KTTA', 'NZFX']
+link = 'http://tgftp.nws.noaa.gov/data/observations/metar/decoded/{}.TXT'
+add_link = 'https://weather.gladstonefamily.net/site/{}' #use this link to get additional data & history
+
+mapbox_access_token = 'pk.eyJ1Ijoia2l0dHl0cmlsbGFoIiwiYSI6ImNqajlzY3dydDB6aGMza3AyeDFscXppcDYifQ.aRIq9GQtJxSojfnkEf-xTg'
+
+@app.route("/")
+def hello():
+    return render_template('index.html',
+        mapbox_access_token=mapbox_access_token, r_long=0, r_lat=0)
+
+@app.route('/favicon.ico')
+def fav():
+    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico')
+
+
+def getdata():
+    for icao_i in icao:
+        temp_array = dataparser.getairportdata(icao_i)
+        print('/////////TEMP ARRAY//////////')
+        print(temp_array)
+        print('////////*************////////')
+        setdb(temp_array[0],temp_array[1],temp_array[2],temp_array[3],temp_array[4],temp_array[5],temp_array[6],
+              temp_array[7],temp_array[8],temp_array[9],temp_array[10],temp_array[11],temp_array[12])
     return 'Test'
 
 
@@ -598,7 +597,7 @@ def aircrafrparams():
     return 'Done'
 
 
-scheduler.add_job(func=refreshdata, trigger="interval", minutes=1440)
+scheduler.add_job(func=refreshdata, trigger="interval", minutes=60)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
