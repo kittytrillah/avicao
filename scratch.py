@@ -220,11 +220,21 @@ class GetActiveAirports:
         pass
 
 
+class Date:
+    import datetime
+
+    def getdate(self):
+        pass
+
+    def gettime(self):
+        pass
+
+
 import codecs
-from flask import Flask
-from flask import render_template
-from flask import request
-from flask import redirect
+from flask import Flask, render_template, request, redirect, Response
+import sys, os
+sys.path.insert(0, os.getcwd()+"/scripts")
+import datamanager as dm
 import matplotlib.pyplot as plt
 import requests
 import re
@@ -233,8 +243,6 @@ import sqlite3
 import seaborn as sns
 import base64
 import random
-import os
-from flask import Response
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from werkzeug.contrib.fixers import ProxyFix
