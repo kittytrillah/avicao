@@ -253,7 +253,7 @@ def getdata():
 
 
 def setdb(place, rdate, pressure, wind, humidity, temperature, name, crit_sum, crit_w, crit_h, crit_t, result_coordinatex, result_coordinatey):
-    conn = sqlite3.connect("icao_db.db")
+    conn = sqlite3.connect("static/icao_db.db")
     c = conn.cursor()
     c.execute("Create TABLE if not exists %s (rdate TEXT,pressure FLOAT,wind FLOAT,humidity FLOAT, temperature FLOAT, name TEXT, crit_overall FLOAT, crit_wind FLOAT, crit_humidity FLOAT, crit_temperature FLOAT)"
               % place)
@@ -268,7 +268,7 @@ def setdb(place, rdate, pressure, wind, humidity, temperature, name, crit_sum, c
 
 
 def setuniquedb(place, rdate, pressure, wind, humidity, temperature, name, crit_sum, crit_w, crit_h, crit_t, result_coordinatex, result_coordinatey):
-    conn = sqlite3.connect("icao_db.db")
+    conn = sqlite3.connect("static/icao_db.db")
     c = conn.cursor()
     try:
         c.execute("Create TABLE if not exists currentvalues (place TEXT,rdate TEXT,pressure FLOAT,wind FLOAT,humidity FLOAT, temperature FLOAT, aname TEXT, crit_overall FLOAT, crit_wind FLOAT, crit_humidity FLOAT, crit_temperature FLOAT, result_coordinatex FLOAT, result_coordinatey FLOAT)")
@@ -292,11 +292,11 @@ def clearjson():
     print('JSON got cleared')
     data = {}
     data['features'] = []
-    if os.path.exists("data.geojson"):
-        os.remove("data.geojson")
+    if os.path.exists("static/data.geojson"):
+        os.remove("static/data.geojson")
     else:
         print("The file does not exist")
-    with open('data.geojson', 'w') as outfile:
+    with open('static/data.geojson', 'w') as outfile:
         json.dump(data, outfile)
     getdata()
     return 'Done'
@@ -356,7 +356,7 @@ def createjson(place, rdate, pressure, wind, humidity, temperature, name, crit_s
 
 def getdatabyicao(icao_get):
     datatoreceive = []
-    conn = sqlite3.connect("icao_db.db")
+    conn = sqlite3.connect("static/icao_db.db")
     c = conn.cursor()
     try:
         c.execute("SELECT * FROM currentvalues WHERE place=?", (icao_get,))
@@ -372,7 +372,7 @@ def getdatabyicao(icao_get):
 
 
 def recordtext(icao, info):
-    f = open("" + icao + ".txt", "w+")
+    f = open("static/" + icao + ".txt", "w+")
     f.write("" + info)
     f.close()
     return 'Done'
