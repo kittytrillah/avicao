@@ -1,5 +1,16 @@
+import os
+import sys
+sys.path.insert(0, os.getcwd()+"/")
+import converter
+import sqlite3
+import json
+import requests
+import re
+
+
 class DataParser:
     def getairportdata(self, icao_i):
+        print('Airport data is getting')
         result_date = 'N/A'; result_dp = 0; result_pressure = 0; result_relhum = 0; result_temp = 0; result_tempo = 0;
         result_visibility = 0; result_windspd = 0; result_place = ''; result_overallconditions = 0; result_critwind = 0;
         result_crithumid = 0; result_crittemp = 0; result_coordinatex = 0; result_coordinatey = 0;
@@ -109,8 +120,8 @@ class DataParser:
                                 print("list_we_word equals more")
                                 whole_part_we = "" + list_we_word[0] + "°" + list_we_word[1] + "'" + list_we_word[2] + '"' + we_word
                                 print(whole_part_we)
-                            result_coordinatex = parse_dms(whole_part_sn)
-                            result_coordinatey = parse_dms(whole_part_we)
+                            result_coordinatex = converter.parse_dms(whole_part_sn)
+                            result_coordinatey = converter.parse_dms(whole_part_we)
                             print("Result Coordinatex DMS O DD")
                             print(result_coordinatex)
                             print("Result Coordinatey DMS O DD")
@@ -212,12 +223,6 @@ class DataParser:
                result_tempo, result_place, result_overallconditions, result_critwind, result_crithumid,
                result_crittemp, result_coordinatex, result_coordinatey)
 
-
-import os
-import sys
-sys.path.insert(0, os.getcwd()+"/")
-import sqlite3
-
 conn = sqlite3.connect("icao_db.db")
 dataparser = DataParser()
 wind_crit = 17.3 #20 MPH
@@ -234,12 +239,16 @@ add_link = 'https://weather.gladstonefamily.net/site/{}' #use this link to get a
 
 def getdata():
     for icao_i in icao:
+        print('current ucai_i = ' + icao_i)
         temp_array = dataparser.getairportdata(icao_i)
         print('/////////TEMP ARRAY//////////')
         print(temp_array)
         print('////////*************////////')
-        setdb(temp_array[0],temp_array[1],temp_array[2],temp_array[3],temp_array[4],temp_array[5],temp_array[6],
+        try:
+            setdb(temp_array[0],temp_array[1],temp_array[2],temp_array[3],temp_array[4],temp_array[5],temp_array[6],
               temp_array[7],temp_array[8],temp_array[9],temp_array[10],temp_array[11],temp_array[12])
+        except Exception as error:
+            print(error)
     return 'Test'
 
 
@@ -280,13 +289,14 @@ def setuniquedb(place, rdate, pressure, wind, humidity, temperature, name, crit_
 
 
 def clearjson():
+    print('JSON got cleared')
     data = {}
     data['features'] = []
-    if os.path.exists("static/data.geojson"):
-        os.remove("static/data.geojson")
+    if os.path.exists("data.geojson"):
+        os.remove("data.geojson")
     else:
         print("The file does not exist")
-    with open('static/data.geojson', 'w') as outfile:
+    with open('data.geojson', 'w') as outfile:
         json.dump(data, outfile)
     getdata()
     return 'Done'
@@ -297,8 +307,8 @@ def createjson(place, rdate, pressure, wind, humidity, temperature, name, crit_s
     crit_w_json = ''
     crit_h_json = ''
     crit_t_json = ''
-    fincoordx = truncate(result_coordinatex, 4)
-    fincoordy = truncate(result_coordinatey, 4)
+    fincoordx = converter.truncate(result_coordinatex, 4)
+    fincoordy = converter.truncate(result_coordinatey, 4)
     crit_sum_json = 'Weather condition: ' + str(4-crit_sum) + "/4"
     if crit_w == 1:
         crit_w_json = 'Critical wind value'
@@ -362,7 +372,7 @@ def getdatabyicao(icao_get):
 
 
 def recordtext(icao, info):
-    f = open("static/" + icao + ".txt", "w+")
+    f = open("" + icao + ".txt", "w+")
     f.write("" + info)
     f.close()
     return 'Done'
