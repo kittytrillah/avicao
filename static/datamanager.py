@@ -1,6 +1,3 @@
-from __future__ import division, unicode_literals
-
-
 class DataParser:
     def getairportdata(self, icao_i):
         result_date = 'N/A'; result_dp = 0; result_pressure = 0; result_relhum = 0; result_temp = 0; result_tempo = 0;
@@ -211,56 +208,18 @@ class DataParser:
         print(result_coordinatey)
         print("///-------------------------------///")
         recordtext(icao_i, result_info)
-        return(icao_i, result_date, result_pressure, result_windspd, result_relhum, result_tempo, result_place, result_overallconditions, result_critwind, result_crithumid, result_crittemp, result_coordinatex, result_coordinatey)
-        # setdb all this stuff
+        return(icao_i, result_date, result_pressure, result_windspd, result_relhum,
+               result_tempo, result_place, result_overallconditions, result_critwind, result_crithumid,
+               result_crittemp, result_coordinatex, result_coordinatey)
 
 
-class GetActiveAirports:
-    def __init__(self):
-        pass
-
-
-class Date:
-    import datetime
-
-    def getdate(self):
-        pass
-
-    def gettime(self):
-        pass
-
-
-import codecs
-from flask import Flask, render_template, request, redirect, Response
-import sys, os
-sys.path.insert(0, os.getcwd()+"/static")
-import datamanager as dm
-import matplotlib.pyplot as plt
-import requests
-import re
-import itertools
+import os
+import sys
+sys.path.insert(0, os.getcwd()+"/")
 import sqlite3
-import seaborn as sns
-import base64
-import random
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-from werkzeug.contrib.fixers import ProxyFix
-from apscheduler.schedulers.background import BackgroundScheduler
-from bs4 import BeautifulSoup as Soup
-import atexit
-import json
-try:
-    from StringIO import StringIO
-except ImportError:
-    import io as StringIO
 
-app = Flask(__name__)
-dataparser = DataParser()
-scheduler = BackgroundScheduler()
 conn = sqlite3.connect("icao_db.db")
-
-# Input values
+dataparser = DataParser()
 wind_crit = 17.3 #20 MPH
 humid_crit = 90
 temp_crit = 19.4 #-7C
@@ -271,17 +230,6 @@ icao = ['KMSV','MYNN','KM40','KJHN','CWSL','KEGV','SBAA','KNYG','OOSH','SBIZ','S
           'ROYN', 'SKIP', 'KTTA', 'NZFX']
 link = 'http://tgftp.nws.noaa.gov/data/observations/metar/decoded/{}.TXT'
 add_link = 'https://weather.gladstonefamily.net/site/{}' #use this link to get additional data & history
-
-mapbox_access_token = 'pk.eyJ1Ijoia2l0dHl0cmlsbGFoIiwiYSI6ImNqajlzY3dydDB6aGMza3AyeDFscXppcDYifQ.aRIq9GQtJxSojfnkEf-xTg'
-
-@app.route("/")
-def hello():
-    return render_template('index.html',
-        mapbox_access_token=mapbox_access_token, r_long=0, r_lat=0)
-
-@app.route('/favicon.ico')
-def fav():
-    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico')
 
 
 def getdata():
@@ -396,127 +344,6 @@ def createjson(place, rdate, pressure, wind, humidity, temperature, name, crit_s
     return 'Done'
 
 
-@app.route('/plot.png')
-def plotdraw(): #name=None
-
-    # img = StringIO.BytesIO()
-    # sns.set_style("dark") #E.G.
-    #
-    # y = [1,2,3,4,5]
-    # x = [0,2,1,3,4]
-    #
-    # plt.plot(x,y)
-    # plt.savefig(img, format='png')
-    # img.seek(0)
-    #
-    # plot_url = base64.b64encode(img.getvalue())
-    # #return render_template('page.html', plot_url=plot_url)
-
-    fig = create_figure()
-    output = StringIO.BytesIO()
-    FigureCanvas(fig).print_png(output)
-    #plot_url = output #base64.b64encode(output.getvalue())
-    #return render_template('page.html', plot_url=plot_url)
-    return Response(output.getvalue(), mimetype='image/png')
-
-
-def create_figure():
-    fig = Figure()
-    axis = fig.add_subplot(1, 1, 1)
-    xs = range(100)
-    ys = [random.randint(1, 50) for x in xs]
-    axis.plot(xs, ys)
-    return fig
-
-
-@app.route('/', methods=['POST'])
-def searchfor():
-    print("////////////Search started/////////////")
-    text = request.form['ss']
-    print("text ===")
-    print(text)
-    datatoreceive = []
-    conn = sqlite3.connect("icao_db.db")
-    c = conn.cursor()
-    lat = 0
-    long = 0
-    try:
-        if len(text) > 3:
-            if len(text) == 4:
-                c.execute("SELECT * FROM currentvalues WHERE place=?", (text,))
-                conn.commit()
-                rows = c.fetchall()
-                print(rows)
-                if (rows[0]):
-                    datatoreceive = rows[0]
-                    lat = datatoreceive[11]
-                    long = datatoreceive[12]
-                    if(lat == 0 or long == 0):
-                        #elements(datatoreceive[0])
-                        return redirect("/reports/" + datatoreceive[0], code=302)
-                    print("Grabbed a row:::")
-                    print(datatoreceive)
-                else:
-                    c.execute("SELECT * FROM currentvalues WHERE aname LIKE ?", ('%' + text + '%',))
-                    conn.commit()
-                    rows = c.fetchall()
-                    print(rows)
-                    if (rows[0]):
-                        datatoreceive = rows[0]
-                        lat = datatoreceive[11]
-                        long = datatoreceive[12]
-                        if (lat == 0 or long == 0):
-                            #elements(datatoreceive[0])
-                            return redirect("/reports/" + datatoreceive[0], code=302)
-                        print("Grabbed a row:::")
-                        print(datatoreceive)
-            else:
-                c.execute("SELECT * FROM currentvalues WHERE aname LIKE ?", ('%' + text + '%',))
-                conn.commit()
-                rows = c.fetchall()
-                print(rows)
-                if (rows[0]):
-                    datatoreceive = rows[0]
-                    lat = datatoreceive[11]
-                    long = datatoreceive[12]
-                    if (lat == 0 or long == 0):
-                        #elements(datatoreceive[0])
-                        return redirect("/reports/" + datatoreceive[0], code=302)
-                    print("Grabbed a row:::")
-                    print(datatoreceive)
-        # for row in range(0, len(rows), 1):
-        #     datatoreceive = rows[0]
-        #     print("Grabbed a row")
-        #     print(datatoreceive)
-        #     pass
-    except Exception as err:
-        print(err)
-        pass
-    return render_template('index.html',
-                           mapbox_access_token=mapbox_access_token, r_long=long, r_lat=lat)
-
-
-
-@app.route('/reports/')
-@app.route('/reports/<name>')
-def elements(name=None):
-    data = []
-    data = getdatabyicao(name)
-    print("///////////////RECEIVED DATA///////////////")
-    print(data)
-    result = '''<!doctype html>
-    <title>''' + name + '''Weather Report</title>'''
-    result += '<h2>Weather Report: ' + name + ' Date: ' + data[1] + ' </h2><h3>///' + str(data[6]) + '///</h3>'
-    result += '<h3>Weather condition: ' + str((4 - data[7])*25) + '%</h3>'
-    result += '<p>Pressure: ' + str(data[2]) + ' milliBars</p>'
-    result += '<p>Wind: ' + str(data[3]) + ' knots</p>'
-    result += '<p>Humidity: ' + str(data[4]) + '%</p>'
-    result += '<p>Temperature: ' + str(data[5]) + 'F</p>'
-    result += '<p>Latitude: ' + str(data[11]) + 'F</p>'
-    result += '<p>Longitude: ' + str(data[12]) + 'F</p>'
-    return result
-
-
 def getdatabyicao(icao_get):
     datatoreceive = []
     conn = sqlite3.connect("icao_db.db")
@@ -539,76 +366,3 @@ def recordtext(icao, info):
     f.write("" + info)
     f.close()
     return 'Done'
-
-
-def createhtml_icaolist():
-    f = codecs.open("templates/index.html", 'r', 'utf-8')
-    document = Soup(f.read(), "html.parser").get_text()
-    print(document)
-    soup = Soup(document, "html.parser")
-        # title = soup.find('title')
-        # meta = soup.new_tag('meta')
-        # meta['content'] = "text/html; charset=UTF-8"
-        # meta['http-equiv'] = "Content-Type"
-        # title.insert_after(meta)
-    print(soup)
-
-    return 'Done'
-
-
-def dms2dd(degrees, minutes, seconds, direction):
-    dd = float(degrees) + float(minutes)/60 + float(seconds)/(60*60)
-    if direction == 'W' or direction == 'S':
-        dd *= -1
-    return dd
-
-
-def dd2dms(deg):
-    d = int(deg)
-    md = abs(deg - d) * 60
-    m = int(md)
-    sd = (md - m) * 60
-    return [d, m, sd]
-
-
-def parse_dms(dms):
-    print("parse dms")
-    parts = re.split('[^\d\w]+', dms)
-    print(parts)
-    lat = dms2dd(parts[0], parts[1], parts[2], parts[3])
-
-    return lat
-
-
-def refreshdata():
-    clearjson()
-    return 'Done'
-
-
-def truncate(f, n):
-    s = '{}'.format(f)
-    if 'e' in s or 'E' in s:
-        return '{0:.{1}f}'.format(f, n)
-    i, p, d = s.partition('.')
-    return '.'.join([i, (d+'0'*n)[:n]])
-
-
-def getactiveairports():
-    return 'Done'
-
-
-def getuip():
-    return request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-
-
-def aircrafrparams():
-    return 'Done'
-
-
-scheduler.add_job(func=refreshdata, trigger="interval", minutes=60)
-scheduler.start()
-atexit.register(lambda: scheduler.shutdown())
-
-app.wsgi_app = ProxyFix(app.wsgi_app)
-if __name__ == '__main__':
-    app.run(host='194.87.147.155')
